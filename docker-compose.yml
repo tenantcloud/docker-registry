@@ -2,11 +2,32 @@ version: '3.7'
 
 services:
   registry:
+    container_name: registry
     image: registry:2
     restart: always
     ports:
       - "${REGISTRY_PORT:-5000}:5000"
-    environment:
-      REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
     volumes:
       - ${REGISTRY_DATA_FOLDER}:/data
+    networks: 
+      - registry-net
+
+  registry-ui:
+    container_name: registry-ui
+    image: joxit/docker-registry-ui:static
+    ports:
+      - 8080:80
+    environment:
+      - REGISTRY_TITLE=TenantCloud Docker registry
+      - REGISTRY_URL=http://registry:${REGISTRY_PORT:-5000}
+      - DELETE_IMAGES=${DELETE_IMAGES:-false}
+    depends_on:
+      - registry
+    restart: always
+    depends_on:
+      - registry
+    networks: 
+      - registry-net
+
+networks:
+  registry-net:
