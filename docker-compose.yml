@@ -9,14 +9,14 @@ services:
       - "${REGISTRY_PORT:-5000}:5000"
     volumes:
       - ${REGISTRY_DATA_FOLDER}:/data
-    networks: 
+    networks:
       - registry-net
 
   registry-ui:
     container_name: registry-ui
     image: joxit/docker-registry-ui:static
     ports:
-      - 8080:80
+      - ${REGISTRY_UI_PORT:-8080}:80
     environment:
       - REGISTRY_TITLE=TenantCloud Docker registry
       - REGISTRY_URL=http://registry:${REGISTRY_PORT:-5000}
@@ -26,7 +26,7 @@ services:
     restart: always
     depends_on:
       - registry
-    networks: 
+    networks:
       - registry-net
 
 networks:
